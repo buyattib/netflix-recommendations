@@ -1,1 +1,11 @@
-data
+data/edges/*
+data/raw/*
+data/networks/*
+
+data/recommendations/diffusion/*
+data/recommendations/similarity/*
+data/recommendations/weightedProjections/gt3/*
+data/recommendations/weightedProjections/lt3/*
+
+data/weightedProjections/gt3/*
+data/weightedProjections/lt3/*
