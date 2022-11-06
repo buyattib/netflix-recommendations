@@ -1,6 +1,6 @@
 data/edges/*
 data/raw/*
-data/networks/*
+#data/networks/*
 
 data/recommendations/diffusion/*
 data/recommendations/similarity/*
