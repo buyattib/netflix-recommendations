@@ -14,4 +14,6 @@ def make_recommendation(weights_matrix, incidence_matrix):
         recommendations[i, :] = recommended_movies_i #guardo el vector como la fila i de la matriz probS_recommendations, corresponde al usuario i.
         recommendations_newmovie[i, :len(recommended_new_movies_i)] = recommended_new_movies_i #guardo el vector de peliculas ordenadas sin las que ya vio en las primeras n_movies-k_i columnas dejando -1's en las k_i columnas siguientes
 
+    recommendations = recommendations + n_users
+    recommendations_newmovie = recommendations_newmovie + n_users
     return recommendations, recommendations_newmovie

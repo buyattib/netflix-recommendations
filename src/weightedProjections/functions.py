@@ -19,7 +19,7 @@ def probS(weights_matrix, object_degrees):
 def heatS(probS_weights):
     return probS_weights.T
 
-def make_hybrid(weights_matrix, object_degrees, alpha=0.5):
+def make_hybrid(weights_matrix, object_degrees, alpha):
     pre_hybrid = np.divide(weights_matrix, np.power(object_degrees, alpha))
     hybrid = np.divide(pre_hybrid.T, np.power(object_degrees, 1-alpha)).T
     return hybrid
