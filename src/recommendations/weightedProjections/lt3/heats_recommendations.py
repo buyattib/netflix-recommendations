@@ -2,8 +2,8 @@ import numpy as np
 from ..functions import make_recommendation
 
 data_dir = "./data"
-weighted_projections_dir = data_dir + "/weightedProjections/gt3"
-recommendations_dir = data_dir + "/recommendations/weightedProjections/gt3"
+weighted_projections_dir = data_dir + "/weightedProjections/lt3"
+recommendations_dir = data_dir + "/recommendations/weightedProjections/lt3"
 
 incidence = np.load(weighted_projections_dir + "/incidence_90perc_edges.npy")
 heats = np.load(weighted_projections_dir + "/heats.npy")

@@ -4,8 +4,8 @@ import os
 from ..functions import make_recommendation
 
 data_dir = "./data"
-weighted_projections_dir = data_dir + "/weightedProjections/gt3"
-recommendations_dir = data_dir + "/recommendations/weightedProjections/gt3/hybrid"
+weighted_projections_dir = data_dir + "/weightedProjections/lt3"
+recommendations_dir = data_dir + "/recommendations/weightedProjections/lt3/hybrid"
 
 hybrid_files = os.listdir(weighted_projections_dir + "/hybrid")
 

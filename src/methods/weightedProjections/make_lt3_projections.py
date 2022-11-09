@@ -16,7 +16,7 @@ degree_norm_matrix, objects_degree = degree_normalized_projection(incidence_matr
 probS_matrix = probS(degree_norm_matrix, objects_degree)
 heatS_matrix = heatS(probS_matrix)
 
-np.save(weighted_projections_dir + "/incidence.npy", incidence_matrix)
+np.save(weighted_projections_dir + "/incidence_90perc_edges.npy", incidence_matrix)
 np.save(weighted_projections_dir + "/probs.npy", probS_matrix)
 np.save(weighted_projections_dir + "/heats.npy", heatS_matrix)
 
