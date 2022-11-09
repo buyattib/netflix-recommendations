@@ -1,6 +1,6 @@
 import numpy as np
 
-def make_recommendation(weights_matrix, incidence_matrix):
+def make_recommendation_lenta(weights_matrix, incidence_matrix):
     n_users, n_movies = incidence_matrix.shape
     recommendations = np.zeros((n_users, n_movies)) #guardo la lista de recomendaciones completas
     recommendations_newmovie = (-1) * np.ones((n_users, n_movies)) #guardo la lista de recomendaciones sacando los objetos ya recolectados por el usuario
@@ -16,4 +16,18 @@ def make_recommendation(weights_matrix, incidence_matrix):
 
     recommendations = recommendations + n_users
     recommendations_newmovie = recommendations_newmovie + n_users
+    return recommendations, recommendations_newmovie
+
+def make_recommendation(weights_matrix, incidence_matrix):
+    n_users = incidence_matrix.shape[0]
+    scores = np.matmul(weights_matrix, incidence_matrix.T).T
+    recommendations = np.argsort(-scores)+n_users
+    scores[np.where(incidence_matrix == 1)] = -1
+    recommendations_newmovie = np.argsort(-scores)+n_users
+
+    degrees = np.sum(incidence_matrix, axis=1)
+    for i in range(n_users):
+        ki = degrees[i]
+        recommendations_newmovie[i, -ki:] = -1
+
     return recommendations, recommendations_newmovie

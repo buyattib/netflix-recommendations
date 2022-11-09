@@ -1,11 +1,7 @@
-data/edges/*
-data/raw/*
-#data/networks/*
+data/edges
+data/raw
+data/recommendations
+data/weightedProjections
+data/metrics
 
-data/recommendations/diffusion/*
-data/recommendations/similarity/*
-data/recommendations/weightedProjections/gt3/*
-data/recommendations/weightedProjections/lt3/*
-
-data/weightedProjections/gt3/*
-data/weightedProjections/lt3/*
+#data/networks

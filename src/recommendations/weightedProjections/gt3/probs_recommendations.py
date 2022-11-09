@@ -1,11 +1,11 @@
 import numpy as np
-from ..functions import make_recommendation
+from ..functions import make_recommendation, make_recommendation_prueba
 
 data_dir = "./data"
 weighted_projections_dir = data_dir + "/weightedProjections/gt3"
 recommendations_dir = data_dir + "/recommendations/weightedProjections/gt3"
 
-incidence = np.load(weighted_projections_dir + "/incidence.npy")
+incidence = np.load(weighted_projections_dir + "/incidence_90perc_edges.npy")
 probs = np.load(weighted_projections_dir + "/probs.npy")
 
 all_recommendations, recommendations_newmovie = make_recommendation(probs, incidence)
