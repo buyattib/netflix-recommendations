@@ -9,40 +9,41 @@ import numpy as np
 
 
 def recovery(matriz_recomendaciones, enlaces_borrados):
-    r = 0 #esto va a ser el promedio de los r_i de cada usuario
-    num_usuarios = matriz_recomendaciones.shape[0] #el numero de filas es el número de usuarios
+    r = [] #esto va a ser el promedio de los r_i de cada usuario
+    #num_usuarios = matriz_recomendaciones.shape[0] #el numero de filas es el número de usuarios
     num_objetos = matriz_recomendaciones.shape[1]
     num_usuarios_con_enlace_borrados = 0
-    r_i = []
     for i in range(len(matriz_recomendaciones)):
+        r_i = []
+        #print(i)
         recomend_usuario_i = matriz_recomendaciones[i] #esta es la tira de recomendaciones del usuario i
-        #enlaces_borrados_de_i = 0
-        #for (usuario, objetos) in enlaces_borrados:
-        #    if usuario == i:
-        #        enlaces_borrados_de_i += 1 #necesito los enlaces borrados para tener el grado del usuario
         objetos_borrados_usuario_i = [objetos for (usuario, objetos) in enlaces_borrados if usuario == i]
-        enlaces_borrados_de_i = len(objetos_borrados_usuario_i)
-        #print(enlaces_borrados_de_i)
-        #for (usuario, objetos) in enlaces_borrados: 
+        enlaces_borrados_de_i = len(objetos_borrados_usuario_i) 
         if enlaces_borrados_de_i != 0:
             num_usuarios_con_enlace_borrados += 1
             for objetos in objetos_borrados_usuario_i:   
-                #if usuario == i:
                 place = 1 + np.where(recomend_usuario_i == objetos)[0][0] #posicion en la q fue recomendada la peli
-                k_i = len(np.where(recomend_usuario_i == -1)) + enlaces_borrados_de_i
-                #len(np.where(recomend_usuario_i == -1)) me da el numero de objetos cuyos enlaces no borré
+                #print(place)
+                #print(num_objetos)
+                k_i = len(np.where(recomend_usuario_i == 4999)[0]) #+ enlaces_borrados_de_i
+                #print(np.where(recomend_usuario_i == 4999))
+                #print(k_i)
                 r_i.append(place/(num_objetos-k_i))
+                #print(place/(num_objetos-k_i))
+        #print(r_i)
         r_average_i = np.mean(r_i)
-        r += r_average_i/ num_usuarios_con_enlace_borrados #media de los r de todos los usuarios
-    return r
+        #print(r_average_i)
+        r.append(r_average_i)
+    return np.mean(r)
+
 
 def precision_and_recall(matriz_recomendaciones, enlaces_borrados, L): #L es el largo de la lista de recomendacion a considerar
-    d_i = 0
     p = []
     r = []
     num_usuarios = matriz_recomendaciones.shape[0]
     num_objetos = matriz_recomendaciones.shape[1]
     for i in range(len(matriz_recomendaciones)):
+        d_i = 0
         recomend_usuario_i = matriz_recomendaciones[i][0:L] #esta es la tira de recomendaciones del usuario i de largo L
         objetos_borrados_usuario_i = [objetos for (usuario, objetos) in enlaces_borrados if usuario == i]
         enlaces_borrados_de_i = len(objetos_borrados_usuario_i)
@@ -58,12 +59,14 @@ def precision_and_recall(matriz_recomendaciones, enlaces_borrados, L): #L es el 
 def personalization(matriz_recomendaciones, L):
     h = []
     for i in range(len(matriz_recomendaciones)):
-        for j in range(len(matriz_recomendaciones)):
-            if j>i:
-                q_ij = sum(matriz_recomendaciones[i][0:L] == matriz_recomendaciones[j][0:L]) #numero de items en comun en el top L de recomendaciones del usuario i y j.
-                h_ij = 1 - q_ij/L
-                h.append(h_ij)
+        for j in range(i+1, len(matriz_recomendaciones)):
+            #q_ij = sum(matriz_recomendaciones[i][0:L] == matriz_recomendaciones[j][0:L]) #numero de items en comun en el top L de recomendaciones del usuario i y j.
+            q_ij = sum(np.in1d(matriz_recomendaciones[i][0:L], matriz_recomendaciones[j][0:L]))
+            h_ij = 1 - q_ij/L
+            h.append(h_ij)
     return(np.mean(h))
+
+
 
 def novelty(matriz_recomendaciones, dict_grados_objetos,enlaces_borrados , L): #dict_grados_objetos tiene que ser un diccionario que tiene como llave el objeto y como valor su grado
     num_usuarios = matriz_recomendaciones.shape[0]
@@ -78,7 +81,8 @@ def novelty(matriz_recomendaciones, dict_grados_objetos,enlaces_borrados , L): #
         if i in usuarios_enlaces_borrados: #solo me quedo con los que al menos les eliminamos un link
             I_i = 0
             for objeto in recomend_usuario_i:
-                if objeto != -1:
+                if objeto != -4999:
                     I_i += dict_info_objetos[objeto]/L
             I.append(I_i)
     return np.mean(I)
+
