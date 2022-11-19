@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 data_dir = "./data"
 edges_dir = data_dir + "/edges"
 
-edges_by_users = np.load(edges_dir + "/all_edges.npy")
+edges_by_users = np.load(edges_dir + "/edges_low_degree.npy")
 users, degrees = np.unique(edges_by_users[:,0], return_counts=True)
 
 unique_degrees = np.unique(degrees)

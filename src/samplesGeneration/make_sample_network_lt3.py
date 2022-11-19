@@ -31,13 +31,16 @@ def make_igraph_ids(edges):
 
 data_dir = "./data"
 edges_dir = data_dir + "/edges"
-networks_dir = data_dir + "/networks"
+networks_dir = data_dir + "/networks/lt3"
 
 #enlaces con ratings mayores o menores a 3
-edges = np.load(edges_dir + "/gt3.npy")
+edges = np.load(edges_dir + "/lt3.npy")
+dates = edges[:,2]
 
 #armo los enlaces segun ids para igraph
 edges_ids, types, users_id_name_map, movies_id_name_map = make_igraph_ids(edges)
+users = np.where(types == 0)[0]
+n_users = len(users)
 
 #armo las redes
 g_bip = ig.Graph().Bipartite(types, [])
@@ -46,30 +49,38 @@ g_bip.add_edges(edges_ids)
 #pongo el atributo original_name en los vertices para guardar los ids originales de usuarios y peliculas
 for name in users_id_name_map:
     id = users_id_name_map[name]
-    g_bip.vs[id]["original_name"] = name
+    g_bip.vs[id]["original_id"] = name
 
 for name in movies_id_name_map:
     id = movies_id_name_map[name]
-    g_bip.vs[id]["original_name"] = name
+    g_bip.vs[id]["original_id"] = name
 
-#busco todos los usuarios y separo los de grado mayor a 1500
-all_users = np.where(types == 0)[0]
-users_degrees = np.array(g_bip.degree(all_users))
-users_high_degree = np.where(users_degrees >= 1500)[0]
+for i, date in enumerate(dates):
+    eid = g_bip.get_eid(edges_ids[i][0], edges_ids[i][1])
+    g_bip.es[eid]["date"] = date
 
-#elimino los usuarios de grado mayor a 1500
-g_bip.delete_vertices(users_high_degree)
+#hasta aca tengo la red completa gt3, hago 10 sampleos de 5k usuarios
 
-#busco los usuarios que quedaron de grado menor a 1500 y de ellos tomo un sample de 5000 usuarios
-n_users_low_degree = len(np.where(np.array(g_bip.vs["type"]) == False)[0])
-users_low_degree = np.arange(0, n_users_low_degree)
-users_low_degree_sample = np.random.choice(users_low_degree, size=5000, replace=False)
+for l in range(10):
+    copy_g_bip = g_bip.copy()
 
-#tomo todos los usuarios que quedaron fuera del sample de 5000 para eliminarlos
-drop_users_sample = np.setdiff1d(users_low_degree, users_low_degree_sample)
+    users_degrees = np.array(copy_g_bip.degree(users))
+    degree_gt5_users = np.where(users_degrees > 5)[0]
+    users_sample = np.random.choice(degree_gt5_users, size=5000, replace=False)
+    drop_users_sample = np.setdiff1d(users, users_sample)
 
-#los elimino
-g_bip.delete_vertices(drop_users_sample)
+    #los elimino
+    copy_g_bip.delete_vertices(drop_users_sample)
 
-#guardo la red
-g_bip.write_graphmlz(f=networks_dir + "/sample_gt3.graphmlz")
+    # users = np.array([i for i, u in enumerate(copy_g_bip.vs) if u["type"] == False])
+    # movies = np.array([i for i, u in enumerate(copy_g_bip.vs) if u["type"] == True])
+
+    # users_degrees = copy_g_bip.degree(users)
+    # print(np.unique(users_degrees, return_counts=True))
+
+    # print(len(np.unique(users)))
+    # print(len(np.unique(movies)))
+    # print(len(copy_g_bip.es))
+
+    #guardo la red
+    copy_g_bip.write_graphmlz(f=networks_dir + f"/samples/sample_{l}.graphmlz")

@@ -6,11 +6,11 @@ data_dir = "./data"
 networks_dir = data_dir + "/networks"
 
 g_bip_gt3 = ig.Graph().Read_GraphMLz(networks_dir + "/sample_gt3.graphmlz")
-g_bip_lt3 = ig.Graph().Read_GraphMLz(networks_dir + "/sample_lt3.graphmlz")
+# g_bip_lt3 = ig.Graph().Read_GraphMLz(networks_dir + "/sample_lt3.graphmlz")
 
-print(len([m for m in g_bip_gt3.vs if m["type"] == True]))
-print(len([m for m in g_bip_lt3.vs if m["type"] == True]))
 
+# print(len([m for m in g_bip_gt3.vs if m["type"] == True]))
+# print(len([m for m in g_bip_lt3.vs if m["type"] == True]))
 
 # users_gt3 = np.where(np.array(g_bip_gt3.vs["type"]) == False)[0]
 # users_lt3 = np.where(np.array(g_bip_lt3.vs["type"]) == False)[0]

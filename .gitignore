@@ -1,7 +1,1 @@
-data/edges
-data/raw
-data/recommendations
-data/weightedProjections
-data/metrics
-
-#data/networks
+data
