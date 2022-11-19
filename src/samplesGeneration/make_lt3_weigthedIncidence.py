@@ -4,7 +4,7 @@ import time
 
 #paths
 data_dir = "./data"
-networks_dir = data_dir + "/networks/gt3"
+networks_dir = data_dir + "/networks/lt3"
 
 for l in range(10):
     print(l)
