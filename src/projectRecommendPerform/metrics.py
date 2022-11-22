@@ -60,5 +60,5 @@ def calculate_metrics(recommendations, deleted_edges, movies_degrees, L):
     h = 1-q/L
     avg_h = np.sum(np.triu(h, k=0))/(n_users*(n_users-1)/2)
 
-    return r_avg, (precision, recall, ep, er), avg_h, I
+    return r_avg, precision, recall, ep, er, avg_h, I
 
