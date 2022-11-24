@@ -1,16 +1,25 @@
 import numpy as np
 import igraph as ig
-from ..projections import degree_normalized_projection, probS
+from ..projections import degree_normalized_projection, heatS
 from ..recommendations import make_recommendation
 from ..metrics import calculate_metrics
 import time
 
 def reescale_array(array):
     x, y = array.shape
-    a_max = np.max(array, axis=1).reshape((x, 1))
-    a_min = np.min(array, axis=1).reshape((x, 1))
-    dif = (a_max-a_min).reshape((x, 1))
-    reescaled_array = 9*(array - a_min)/dif + 1 
+    reescaled_array = np.zeros((x,y))
+    for i in range(x):
+        row = array[i]
+        nonz = row != 0
+        rmax = np.max(row[nonz])
+        rmin = np.min(row[nonz])
+        if rmax == rmin:
+            reescaledr = np.ones(np.sum(nonz))
+        else:
+            reescaledr = 9 * ((row[nonz] - rmin) / (rmax - rmin)) + 1
+        row[nonz] = reescaledr
+        reescaled_array[i] = row
+
     return reescaled_array
 
 #paths
@@ -44,17 +53,22 @@ for L in [20]:
         incidence_matrix = np.array(incidence_tuple[0])
 
         # #busco la incidencia pesada por fechas
-        weighted_incidence_original = np.load(networks_dir + f"/weightedIncidence/wi_{l}.npy")
-        weighted_incidence = np.power(weighted_incidence_original, 2)
+        weighted_incidence = np.load(networks_dir + f"/weightedIncidence/wi_{l}.npy")
+        weighted_incidence = reescale_array(weighted_incidence)
+        weighted_incidence = np.power(weighted_incidence, 4)
+
+        print("weighted incidence")
 
         #calculo la matriz de pesos que tienen en comun todos los metodos
         degree_norm_matrix, objects_degree = degree_normalized_projection(incidence_matrix)
         #calculo probs
-        probS_matrix = probS(degree_norm_matrix, objects_degree)
+        heatS_matrix = heatS(degree_norm_matrix, objects_degree)
 
         #hago la recomendacion
-        recommendations = make_recommendation(probS_matrix, incidence_matrix)
-        recommendations_weighted = make_recommendation(probS_matrix, incidence_matrix, weighted_incidence)
+        recommendations = make_recommendation(heatS_matrix, incidence_matrix)
+        recommendations_weighted = make_recommendation(heatS_matrix, incidence_matrix, weighted_incidence)
+
+        print("recommendations")
 
         #calculo el diccionario de grados de peliculas
         movies = [i for i, u in enumerate(g_bip.vs) if u["type"]]
@@ -74,6 +88,9 @@ for L in [20]:
 
 print(results)
 print(weighted_results)
+
+np.save(data_dir + "/metrics/heats.npy", results)
+np.save(data_dir + "/metrics/heats_weighted.npy", weighted_results)
 
 results_mean = np.mean(results, axis=1)
 results_std = np.std(results, axis=1)

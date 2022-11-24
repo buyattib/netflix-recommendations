@@ -8,7 +8,7 @@ def get_deleted_edges_byuser(deleted_edges, n_users):
     
     return users_deleted_movies
 
-def calculate_metrics(recommendations, deleted_edges, movies_degrees, L, saltear_r = False):
+def calculate_metrics(recommendations, deleted_edges, movies_degrees, L, saltear_r=False):
     r = []
     precision = []
     recall = []
@@ -27,7 +27,7 @@ def calculate_metrics(recommendations, deleted_edges, movies_degrees, L, saltear
         user_deleted_movies = np.array(users_deleted_movies[user])
         
         #recovery
-        if saltear_r == False:
+        if not saltear_r:
             k_user = len(np.where(user_recommendation == -1)[0])
             deleted_movies_rankings = np.where(user_deleted_movies[:, None] == user_recommendation[None, :])[1]+1
             r_user = deleted_movies_rankings/(n_movies-k_user)
@@ -47,8 +47,9 @@ def calculate_metrics(recommendations, deleted_edges, movies_degrees, L, saltear
 
         #personalization
         counts_matrix[user, recommendations_indices_L[user]] = 1
+    
     r_avg = 0
-    if saltear_r == False:
+    if not saltear_r:
         r_avg = np.mean(np.concatenate(r))
     
     precision = np.mean(precision)
